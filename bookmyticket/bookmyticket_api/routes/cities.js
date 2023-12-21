@@ -50,7 +50,6 @@ router.put('/update/:id', (req, res, next) => {
     let id = req.params.id;
     let name = req.body.name;
     let state = req.body.state;
-  
 
     db.query(`UPDATE city SET name = $1 , state = $2 WHERE id =$3`,[name, state, id], (err, dbResponse)=> {
         if (err) {
