@@ -68,22 +68,16 @@
 //As a CEO of the multiplex chain I shall be able to view the cinema wise total no. of
 // bookings.
 
-// select count(t2.id) as total_booking,t7.name as cinema_name
-// from booking as t2select t6.name as cinema_hall_name,t8.name as movie_name,t1.name as customer_name
-// from customer as t1
-// join booking as t2 on t1.id= t2.customer_id
+// select 
+// t8.name as city_name,t7.name as cinema_name,count(t8.id) as no_of_booking
+// from booking as t2
 // join show_seating_plan as t3 on t2.id = t3.booking_id
-// join seat as t4 on t3.seat_id = t4.id
-// join cinema_hall_section as t5 on t4.cinema_hall_section_id = t5.id
-// join cinema_hall as t6 on t5.cinema_hall_id = t6.id
-// join show as t7 on t6.id = t7.cinema_hall_id
-// join movie as t8 on t7.movie_id = t8.id
-// group by(t1.name,t6.name,t8.name)
-// having t1.name = 'Harrison Wiggins'id = t5.id
+// join show_section as t4 on t3.show_section_id = t4.id
+// join show as t5 on t4.show_id = t5.id
 // join cinema_hall as t6 on t5.cinema_hall_id = t6.id
 // join cinema as t7 on t6.cinema_id = t7.id
-// group by(t2.id,t7.name)
-// order by total_booking desc
+// join city as t8 on t7.city_id = t8.id
+// group by (t7.name,t8.name,t3.status)
 
 // 9)
 // As a CEO of the multiplex chain I shall be able to view the unique customers who have
@@ -101,7 +95,7 @@
 // group by (t2.id,t1.name,t7.name,t8.name)
 // having count(t2.id) = 1
 
-
+// 10)
 // As a CEO of the multiplex chain I shall be able to customers who have booked tickets for
 // the selected movie and selected cinema hall.
 

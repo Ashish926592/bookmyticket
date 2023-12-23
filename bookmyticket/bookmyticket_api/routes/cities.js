@@ -26,7 +26,7 @@ router.post('/', (req, res, next) => {
     let state = req.body.state;
 
 
-    if(name == null && state == null){
+    if(name == null || state == null){
         res.status(404).send({ "insert":"Please enter a name and state"});
     }else{
             // console.log(dbjson);
@@ -45,7 +45,7 @@ router.post('/', (req, res, next) => {
 });
 
 
-router.put('/update/:id', (req, res, next) => {
+router.put('/:id', (req, res, next) => {
 
     let id = req.params.id;
     let name = req.body.name;
@@ -66,7 +66,7 @@ router.put('/update/:id', (req, res, next) => {
     });
 });
 
-router.delete('/delete/:id',(req,res,next)=>{
+router.delete('/:id',(req,res,next)=>{
     let id = req.params.id;
     console.log(id);
     db.query(`delete from city where id = $1`,[id], (err, dbResponse)=> {
