@@ -5,7 +5,9 @@ exports.get_data = ('/', (req, res, next) => {
 });
 
 
-exports.add_data = ('/', (req, res, next) => {
+
+
+exports.add_data = ('/',(req, res, next) => {
   let { name, state } = req.query
   model.add_city_data(name, state, res);
 });

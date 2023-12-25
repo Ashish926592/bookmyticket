@@ -309,9 +309,7 @@ HAVING t8.name = $1 and t6.name = $2`;
 
     // console.log(movie_name, hall_name);
 
-    if (movie_name == null && hall_name == null) {
-        res.status(404).send({ "required": "Please enter a movie_name and hall_name" });
-    } else {
+   
         db.query(query, [movie_name, hall_name], (err, dbResponse) => {
             if (err) {
                 console.log(err);
@@ -324,7 +322,7 @@ HAVING t8.name = $1 and t6.name = $2`;
             }
         });
 
-    }
+    
 
 })
 
