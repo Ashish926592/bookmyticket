@@ -121,9 +121,7 @@ exports.report4 = ((city_name, movie_name, cinema_name, hall_name, date, res) =>
 
     // console.log(movie_name, hall_name);
 
-    if (movie_name == null && hall_name == null) {
-        res.status(404).send({ "required": "Please enter a movie_name and hall_name" });
-    } else {
+   
         db.query(query, [city_name, movie_name, cinema_name, hall_name, date], (err, dbResponse) => {
             if (err) {
                 console.log(err);
@@ -136,7 +134,6 @@ exports.report4 = ((city_name, movie_name, cinema_name, hall_name, date, res) =>
             }
         });
 
-    }
 
 })
 

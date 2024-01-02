@@ -6,7 +6,7 @@ const db = require('./db')
 exports.validate_report1 = (req, res, next) => {
     const schema = Joi.object({
        
-        city_name: Joi.string().required()
+        city_name: Joi.string().min(2).pattern(/^[a-zA-Z\s]+$/).required()
 
     }).unknown(false)
 
@@ -24,7 +24,7 @@ exports.validate_report1 = (req, res, next) => {
 exports.validate_report2 = (req, res, next) => {
     const schema = Joi.object({
        
-        cinema_hall: Joi.string().regex(/^[a-zA-Z0-9\s]+$/).required()
+        cinema_hall: Joi.string().min(1).regex(/^[a-zA-Z0-9\s]+$/).required()
 
     }).unknown(false)
 
@@ -42,7 +42,8 @@ exports.validate_report2 = (req, res, next) => {
 exports.validate_report3 = (req, res, next) => {
     const schema = Joi.object({
        
-        movie_name: Joi.string().required()
+        movie_name: Joi.string().min(1).max(255).regex(/^[a-zA-Z0-9\s]+$/).required()
+
 
     }).unknown(false)
 
@@ -59,9 +60,9 @@ exports.validate_report3 = (req, res, next) => {
 
 exports.validate_report4 = (req, res, next) => {
     const schema = Joi.object({
-        city_name: Joi.string().required(),
-        movie_name: Joi.string().required(),
-        cinema_name: Joi.string().regex(/^[a-zA-Z0-9\s]+$/).required(),
+        city_name:Joi.string().min(2).pattern(/^[a-zA-Z\s]+$/).required(),
+        movie_name:Joi.string().min(1).regex(/^[a-zA-Z0-9\s]+$/).required(),
+        cinema_name: Joi.string().min(2).regex(/^[a-zA-Z0-9\s]+$/).required(),
         hall_name: Joi.string().regex(/^[a-zA-Z0-9\s]+$/).required(),
         date: Joi.date().iso().max('2050-12-31').required()
 
@@ -99,9 +100,8 @@ exports.validate_report6 = (req, res, next) => {
 exports.validate_report10 = (req, res, next) => {
     const schema = Joi.object({
        
-        movie_name: Joi.string().required(),
-        hall_name: Joi.string().required()
-
+        movie_name:Joi.string().min(1).regex(/^[a-zA-Z0-9\s]+$/).required(),
+        hall_name:Joi.string().regex(/^[a-zA-Z0-9\s]+$/).required(),
     }).unknown(false)
 
     const { error } = schema.validate(req.query, { abortEarly: false });

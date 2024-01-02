@@ -13,7 +13,7 @@ pool.connect((err)=>{
   if(err){
     console.log('connection error',err.stack);
   }else{
-    console.log('connected successfully for report');
+    console.log('connected successfully for report router');
   }
 })
 

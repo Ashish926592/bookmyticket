@@ -14,8 +14,6 @@ exports.get_city_data = ((res) => {
 })
 
 
-
-
 exports.add_city_data = ((name, state, res) => {
 
 
