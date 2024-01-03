@@ -5,11 +5,12 @@ exports.get_data = ('/', (req, res, next) => {
 });
 
 
-
-
 exports.add_data = ('/',(req, res, next) => {
-  let { name, state } = req.body;
-  model.add_city_data(name, state, res);
+  let { name, state } = req.query;
+  if(!res.headersSent) {
+    // console.log(name,state);
+    model.add_city_data(name, state, res);
+  }
 });
 
 
