@@ -6,29 +6,30 @@ const db = require('./db');
 
 // http://localhost:3000/report/city?city_name=Ahmedabad
 
-exports.report1 = ((city_name, res) => {
+exports.report1 = ((city_name) => {
+    return new Promise((resolve, reject) => {
+        const query = ` SELECT t1.name AS city_name,t5.name AS movie_name
+        FROM city AS t1
+        JOIN cinema AS t2 ON t1.id = t2.city_id
+        JOIN cinema_hall AS t3 ON t2.id = t3.cinema_id
+        JOIN show AS t4 ON t3.id = t4.cinema_hall_id
+        JOIN movie AS t5 ON t4.movie_id = t5.id 
+        GROUP BY(t1.name,t5.name) 
+        HAVING t1.name = $1
+        ORDER BY t1.name;`
 
-    const query = ` SELECT t1.name AS city_name,t5.name AS movie_name
-    FROM city AS t1
-    JOIN cinema AS t2 ON t1.id = t2.city_id
-    JOIN cinema_hall AS t3 ON t2.id = t3.cinema_id
-    JOIN show AS t4 ON t3.id = t4.cinema_hall_id
-    JOIN movie AS t5 ON t4.movie_id = t5.id 
-    GROUP BY(t1.name,t5.name) 
-    HAVING t1.name = $1
-    ORDER BY t1.name;`
-
-    db.query(query, [city_name], (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if (dbResponse.rows.length === 0) {
-                res.status(404).send({ "data": "No matching record found for the provided city" });
+        db.query(query, [city_name], (err, dbResponse) => {
+            if (err) {
+                reject(err);
             } else {
-                res.json(dbResponse.rows)
+                if (dbResponse.rows.length === 0) {
+                    reject({ "data": "No matching record found for the provided city" });
+                } else {
+                    resolve(dbResponse.rows)
+                }
             }
-        }
 
+        });
     });
 })
 
@@ -38,28 +39,28 @@ exports.report1 = ((city_name, res) => {
 
 // http://localhost:3000/report/cinema_hall?cinema_hall=Screen+1
 
-exports.report2 = ((cinema_hall, res) => {
-
-    let query = `SELECT DISTINCT t1.name AS hall_name,t3.name AS movie_name,t2.time,t2.date
+exports.report2 = ((cinema_hall) => {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT DISTINCT t1.name AS hall_name,t3.name AS movie_name,t2.time,t2.date
     FROM cinema_hall AS t1 
     JOIN show AS t2 ON t1.id = t2.cinema_hall_id
     JOIN movie AS t3 ON t2.movie_id = t3.id
     GROUP BY (t1.name,t3.name,t2.time,t2.date)
     HAVING t1.name= $1
     ORDER BY t1.name,t2.time;`
-    db.query(query, [cinema_hall], (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if (dbResponse.rows.length === 0) {
-                res.status(404).send({ "data": "No matching record found for the provided hall name" });
+        db.query(query, [cinema_hall], (err, dbResponse) => {
+            if (err) {
+                reject(err);
             } else {
-                res.json(dbResponse.rows);
+                if (dbResponse.rows.length === 0) {
+                    reject({ "data": "No matching record found for the provided hall name" });
+                } else {
+                    resolve(dbResponse.rows);
+                }
             }
-        }
 
-    })
-
+        })
+    });
 })
 
 
@@ -68,21 +69,22 @@ exports.report2 = ((cinema_hall, res) => {
 
 // http://localhost:3000/report/movie_name?movie_name=Dangal
 
-exports.report3 = ((movie_name, res) => {
-    let query = ` SELECT * FROM movie WHERE name = $1`
-    db.query(query, [movie_name], (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if (dbResponse.rows.length === 0) {
-                res.status(404).send({ "data": "No matching record found for the provided movie name." });
+exports.report3 = ((movie_name) => {
+    return new Promise((resolve, reject) => {
+        let query = ` SELECT * FROM movie WHERE name = $1`
+        db.query(query, [movie_name], (err, dbResponse) => {
+            if (err) {
+                reject(err);
             } else {
-                res.json(dbResponse.rows);
+                if (dbResponse.rows.length === 0) {
+                    reject({ "data": "No matching record found for the provided movie name." });
+                } else {
+                    resolve(dbResponse.rows);
+                }
             }
-        }
 
-    })
-
+        })
+    });
 });
 
 
@@ -101,8 +103,8 @@ exports.report3 = ((movie_name, res) => {
 // http://localhost:3000/report/seating_plan
 
 exports.report4 = ((city_name, movie_name, cinema_name, hall_name, date, res) => {
-
-    let query = `SELECT t1.name AS city_name,t2.name AS cinema_name,t3.name AS cinema_hall_name,
+    return new Promise((resolve, reject) => {
+        let query = `SELECT t1.name AS city_name,t2.name AS cinema_name,t3.name AS cinema_hall_name,
     t4.name AS cinema_hall_section,t9.name AS movie_name,
     t5.number AS seat_number,t6.status AS status,
     t7.price AS movie_price,t8.date AS show_date,t8.time AS movie_time
@@ -119,21 +121,21 @@ exports.report4 = ((city_name, movie_name, cinema_name, hall_name, date, res) =>
     AND t3.name = $4 AND t8.date = $5
     ORDER BY t1.name,t9.name,t3.name,t8.time,t5.number`;
 
-    // console.log(movie_name, hall_name);
+        // console.log(movie_name, hall_name);
 
-   
+
         db.query(query, [city_name, movie_name, cinema_name, hall_name, date], (err, dbResponse) => {
             if (err) {
-                console.log(err);
+                reject(err);
             } else {
                 if (dbResponse.rows.length === 0) {
-                    res.status(404).send({ "data": "No matching record found." });
+                    reject({ "data": "No matching record found." });
                 } else {
-                    res.json(dbResponse.rows);
+                    resolve(dbResponse.rows);
                 }
             }
         });
-
+    });
 
 })
 
@@ -144,23 +146,23 @@ exports.report4 = ((city_name, movie_name, cinema_name, hall_name, date, res) =>
 
 // http://localhost:3000/report/top_ten_actor
 
-exports.report5 = ((res) => {
-
-    let query = `SELECT t1.name AS actor_name,count(t3.id) AS number_of_movie
+exports.report5 = (() => {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT t1.name AS actor_name,count(t3.id) AS number_of_movie
     FROM actor AS t1
    JOIN movie_cast AS t2 ON t1.id = t2.actor_id
    JOIN movie as t3 ON t2.movie_id = t3.id 
    GROUP BY t1.name
    ORDER BY number_of_movie DESC LIMIT 10;`
-    db.query(query, (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(dbResponse.rows);
-        }
+        db.query(query, (err, dbResponse) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbResponse.rows);
+            }
 
-    })
-
+        })
+    });
 })
 
 // 6)
@@ -170,23 +172,24 @@ exports.report5 = ((res) => {
 
 // http://localhost:3000/report/year?year=2021
 
-exports.report6 = ((year, res) => {
-    let query = ` SELECT name, release_date
-    FROM movie
-    WHERE EXTRACT(YEAR FROM release_date) = $1;`
-    db.query(query, [year], (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if (dbResponse.rows.length === 0) {
-                res.status(404).send({ "data": "No matching record found for the provided year." });
+exports.report6 = ((year) => {
+    return new Promise((resolve, reject) => {
+        let query = ` SELECT name, release_date
+        FROM movie
+        WHERE EXTRACT(YEAR FROM release_date) = $1;`
+        db.query(query, [year], (err, dbResponse) => {
+            if (err) {
+                reject(err);
             } else {
-                res.json(dbResponse.rows);
+                if (dbResponse.rows.length === 0) {
+                    reject({ "data": "No matching record found for the provided year." });
+                } else {
+                    resolve(dbResponse.rows);
+                }
             }
-        }
 
-    })
-
+        })
+    });
 })
 
 
@@ -197,27 +200,28 @@ exports.report6 = ((year, res) => {
 
 // http://localhost:3000/report/top_ten_customers
 
-exports.report7 = ((res) => {
-    let query = ` SELECT t8.name AS city_name,t7.name AS cinema_name,t1.name,SUM(t4.price) AS amount 
-    FROM customer AS t1
-    JOIN booking AS t2 ON t1.id= t2.customer_id
-    JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
-    JOIN show_section AS t4 ON t3.show_section_id = t4.id
-    JOIN show AS t5 ON t4.show_id = t5.id
-    JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
-    JOIN cinema AS t7 ON t6.cinema_id = t7.id
-    JOIN city AS t8 ON t7.city_id = t8.id
-    GROUP BY (t1.name,t7.name,t8.name)
-    ORDER BY amount DESC LIMIT 10`
-    db.query(query, (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(dbResponse.rows);
-        }
+exports.report7 = (() => {
+    return new Promise((resolve, reject) => {
+        let query = ` SELECT t8.name AS city_name,t7.name AS cinema_name,t1.name,SUM(t4.price) AS amount 
+        FROM customer AS t1
+        JOIN booking AS t2 ON t1.id= t2.customer_id
+        JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
+        JOIN show_section AS t4 ON t3.show_section_id = t4.id
+        JOIN show AS t5 ON t4.show_id = t5.id
+        JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
+        JOIN cinema AS t7 ON t6.cinema_id = t7.id
+        JOIN city AS t8 ON t7.city_id = t8.id
+        GROUP BY (t1.name,t7.name,t8.name)
+        ORDER BY amount DESC LIMIT 10`
+        db.query(query, (err, dbResponse) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbResponse.rows);
+            }
 
-    })
-
+        })
+    });
 })
 
 
@@ -227,26 +231,27 @@ exports.report7 = ((res) => {
 
 // http://localhost:3000/report/no_of_booking
 
-exports.report8 = ((res) => {
+exports.report8 = (() => {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT 
+        t8.name AS city_name,t7.name AS cinema_name,count(t8.id) AS no_of_booking
+        FROM booking AS t2
+        JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
+        JOIN show_section AS t4 ON t3.show_section_id = t4.id
+        JOIN show AS t5 ON t4.show_id = t5.id
+        JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
+        JOIN cinema AS t7 ON t6.cinema_id = t7.id
+        JOIN city AS t8 ON t7.city_id = t8.id
+        GROUP BY (t7.name,t8.name,t3.status)`
+        db.query(query, (err, dbResponse) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbResponse.rows);
+            }
 
-    let query = `SELECT 
-    t8.name AS city_name,t7.name AS cinema_name,count(t8.id) AS no_of_booking
-    FROM booking AS t2
-    JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
-    JOIN show_section AS t4 ON t3.show_section_id = t4.id
-    JOIN show AS t5 ON t4.show_id = t5.id
-    JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
-    JOIN cinema AS t7 ON t6.cinema_id = t7.id
-    JOIN city AS t8 ON t7.city_id = t8.id
-    GROUP BY (t7.name,t8.name,t3.status)`
-    db.query(query, (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(dbResponse.rows);
-        }
-
-    })
+        })
+    });
 
 })
 
@@ -257,29 +262,30 @@ exports.report8 = ((res) => {
 
 // http://localhost:3000/report/unique_customers
 
-exports.report9 = ((res) => {
-    let query = `SELECT t8.name AS city_name,t7.name AS cinema_name,
-    t1.name customer_name,COUNT(t2.id) AS count_number
-    FROM customer AS t1
-    JOIN booking AS t2 ON t1.id= t2.customer_id
-    JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
-    JOIN show_section AS t4 ON t3.show_section_id = t4.id
-    JOIN show AS t5 ON t4.show_id = t5.id
-    JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
-    JOIN cinema AS t7 ON t6.cinema_id = t7.id
-    JOIN city AS t8 ON t7.city_id = t8.id
-    GROUP BY (t2.id,t1.name,t7.name,t8.name)
-    HAVING COUNT(t2.id) = 1
-    ORDER BY city_name`
-    db.query(query, (err, dbResponse) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(dbResponse.rows);
-        }
+exports.report9 = (() => {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT t8.name AS city_name,t7.name AS cinema_name,
+        t1.name customer_name,COUNT(t2.id) AS count_number
+        FROM customer AS t1
+        JOIN booking AS t2 ON t1.id= t2.customer_id
+        JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
+        JOIN show_section AS t4 ON t3.show_section_id = t4.id
+        JOIN show AS t5 ON t4.show_id = t5.id
+        JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
+        JOIN cinema AS t7 ON t6.cinema_id = t7.id
+        JOIN city AS t8 ON t7.city_id = t8.id
+        GROUP BY (t2.id,t1.name,t7.name,t8.name)
+        HAVING COUNT(t2.id) = 1
+        ORDER BY city_name`
+        db.query(query, (err, dbResponse) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(dbResponse.rows);
+            }
 
-    })
-
+        })
+    });
 })
 
 // 10)
@@ -289,38 +295,37 @@ exports.report9 = ((res) => {
 
 // http://localhost:3000/report/show_booking_ticket?movie_name=Unbroken&hall_name=Screen+1
 
-exports.report10 = ((movie_name, hall_name, res) => {
+exports.report10 = ((movie_name, hall_name) => {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT t6.name AS cinema_hall_name,t8.name AS movie_name,
+        t1.name AS customer_name
+        FROM customer AS t1
+        JOIN booking AS t2 ON t1.id= t2.customer_id
+        JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
+        JOIN seat AS t4 ON t3.seat_id = t4.id
+        JOIN cinema_hall_section AS t5 ON t4.cinema_hall_section_id = t5.id
+        JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
+        JOIN show AS t7 ON t6.id = t7.cinema_hall_id
+        JOIN movie AS t8 ON t7.movie_id = t8.id
+        GROUP BY(t1.name,t6.name,t8.name)
+        HAVING t8.name = $1 and t6.name = $2`;
 
-    let query = `SELECT t6.name AS cinema_hall_name,t8.name AS movie_name,
-t1.name AS customer_name
-FROM customer AS t1
-JOIN booking AS t2 ON t1.id= t2.customer_id
-JOIN show_seating_plan AS t3 ON t2.id = t3.booking_id
-JOIN seat AS t4 ON t3.seat_id = t4.id
-JOIN cinema_hall_section AS t5 ON t4.cinema_hall_section_id = t5.id
-JOIN cinema_hall AS t6 ON t5.cinema_hall_id = t6.id
-JOIN show AS t7 ON t6.id = t7.cinema_hall_id
-JOIN movie AS t8 ON t7.movie_id = t8.id
-GROUP BY(t1.name,t6.name,t8.name)
-HAVING t8.name = $1 and t6.name = $2`;
+        // console.log(movie_name, hall_name);
 
-    // console.log(movie_name, hall_name);
 
-   
         db.query(query, [movie_name, hall_name], (err, dbResponse) => {
             if (err) {
-                console.log(err);
+                reject(err);
             } else {
                 if (dbResponse.rows.length === 0) {
-                    res.status(404).send({ "data": "No matching record found." });
+                    reject({ "data": "No matching record found." });
                 } else {
-                    res.json(dbResponse.rows);
+                    resolve(dbResponse.rows);
                 }
             }
         });
 
-    
-
+    });
 })
 
 
