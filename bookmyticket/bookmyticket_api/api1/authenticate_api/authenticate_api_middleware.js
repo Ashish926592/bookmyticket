@@ -16,10 +16,3 @@ exports.checkRole = (role) => (req, res, next) => {
       return res.status(403).send('Access denied. Insufficient permissions.');
   }
 };
-
-
-
-
-
-
-

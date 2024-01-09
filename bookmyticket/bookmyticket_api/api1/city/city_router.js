@@ -1,15 +1,12 @@
-var express = require('express');
-var router = express.Router();
-
-var router_name = require('../city/city_controller');
-
-var city_validator = require('./city_validator');
-// const { authenticateSession, checkRole } = require('../authenticate_api/authenticate_api_middleware');
-var {checkRole} = require('../authenticate_api/authenticate_api_middleware');
-
-router.get('/',router_name.get_data)
-router.post('/',checkRole('admin'), city_validator.validate_add_city,router_name.add_data)
-router.put('/',checkRole('admin'),city_validator.validate_update_city,router_name.update_data)
-router.delete('/',checkRole('admin'),city_validator.validate_delete_city,router_name.delete_data)
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var router_name = require("../city/city_controller");
+var city_validator = require("./city_validator");
+var authenticate_api_middleware_1 = require("../authenticate_api/authenticate_api_middleware");
+var router = (0, express_1.Router)();
+router.get('/', router_name.get_data);
+router.post('/', (0, authenticate_api_middleware_1.checkRole)('admin'), city_validator.validate_add_city, router_name.add_data);
+router.put('/', (0, authenticate_api_middleware_1.checkRole)('admin'), city_validator.validate_update_city, router_name.update_data);
+router.delete('/', (0, authenticate_api_middleware_1.checkRole)('admin'), city_validator.validate_delete_city, router_name.delete_data);
 module.exports = router;
