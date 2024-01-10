@@ -1,11 +1,19 @@
 import * as db from './db';
+import { QueryResult } from 'pg';
 // 1)As a customer I shall be able to view the list of movies showing in their city.
 //Ahmedabad
-
+// {
+//     "city_name": "Ahmedabad",
+//     "movie_name": "3 Idiots"
+//   }
+interface report1 {
+    city_name: string;
+    movie_name: string;
+}
 
 // http://localhost:3000/report/city?city_name=Ahmedabad
 
-export const report1 = ((city_name:string): Promise<any> => {
+export const report1 = ((city_name: string): Promise<report1[]> => {
     return new Promise((resolve, reject) => {
         const query = ` SELECT t1.name AS city_name,t5.name AS movie_name
         FROM city AS t1
@@ -17,7 +25,7 @@ export const report1 = ((city_name:string): Promise<any> => {
         HAVING t1.name = $1
         ORDER BY t1.name;`
 
-        db.query(query, [city_name], (err:Error, dbResponse) => {
+        db.query(query, [city_name], (err: Error, dbResponse:QueryResult<report1>) => {
             if (err) {
                 reject(err);
             } else {
@@ -34,11 +42,23 @@ export const report1 = ((city_name:string): Promise<any> => {
 
 //2) As a customer I shall be able to view the list of movies showing in the selected cinema hall.
 //Screen 1
+// {
+//     "hall_name": "Screen 1",
+//     "movie_name": "3 Idiots",
+//     "time": "11:00:00",
+//     "date": "2022-02-28T18:30:00.000Z"
+//   }
 
+interface report2 {
+    hall_name: string;
+    movie_name: string;
+    time: number;
+    date: string;
+}
 
 // http://localhost:3000/report/cinema_hall?cinema_hall=Screen+1
 
-export const report2 = ((cinema_hall:string): Promise<any> => {
+export const report2 = ((cinema_hall: string): Promise<report2[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT DISTINCT t1.name AS hall_name,t3.name AS movie_name,t2.time,t2.date
     FROM cinema_hall AS t1 
@@ -47,7 +67,7 @@ export const report2 = ((cinema_hall:string): Promise<any> => {
     GROUP BY (t1.name,t3.name,t2.time,t2.date)
     HAVING t1.name= $1
     ORDER BY t1.name,t2.time;`
-        db.query(query, [cinema_hall], (err:Error, dbResponse) => {
+        db.query(query, [cinema_hall], (err: Error, dbResponse:QueryResult<report2>) => {
             if (err) {
                 reject(err);
             } else {
@@ -68,10 +88,10 @@ export const report2 = ((cinema_hall:string): Promise<any> => {
 
 // http://localhost:3000/report/movie_name?movie_name=Dangal
 
-export const report3 = ((movie_name:string): Promise<any> => {
+export const report3 = ((movie_name: string): Promise<any> => {
     return new Promise((resolve, reject) => {
         let query = ` SELECT * FROM movie WHERE name = $1`
-        db.query(query, [movie_name], (err:Error, dbResponse) => {
+        db.query(query, [movie_name], (err: Error, dbResponse) => {
             if (err) {
                 reject(err);
             } else {
@@ -101,7 +121,34 @@ export const report3 = ((movie_name:string): Promise<any> => {
 
 // http://localhost:3000/report/seating_plan
 
-export const report4 = ((city_name:string, movie_name:string, cinema_name:string, hall_name:string, date:string): Promise<any> => {
+// {
+//     "city_name": "Ahmedabad",
+//     "cinema_name": "PTR Cinema",
+//     "cinema_hall_name": "Screen 1",
+//     "cinema_hall_section": "CLASSIC",
+//     "movie_name": "3 Idiots",
+//     "seat_number": "A10",
+//     "status": "Available",
+//     "movie_price": 100,
+//     "show_date": "2022-03-03T18:30:00.000Z",
+//     "movie_time": "11:00:00"
+//   }
+
+interface report4{
+    city_name:string;
+    cinema_name:string;
+    cinema_hall_name:string;
+    cinema_hall_section:string;
+    movie_name:string;
+    seat_number:string;
+    status:string;
+    movie_price:number;
+    show_date:string;
+    movie_time:string;
+
+}
+
+export const report4 = ((city_name: string, movie_name: string, cinema_name: string, hall_name: string, date: string): Promise<report4[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT t1.name AS city_name,t2.name AS cinema_name,t3.name AS cinema_hall_name,
     t4.name AS cinema_hall_section,t9.name AS movie_name,
@@ -123,7 +170,7 @@ export const report4 = ((city_name:string, movie_name:string, cinema_name:string
         // console.log(movie_name, hall_name);
 
 
-        db.query(query, [city_name, movie_name, cinema_name, hall_name, date], (err:Error, dbResponse) => {
+        db.query(query, [city_name, movie_name, cinema_name, hall_name, date], (err: Error, dbResponse:QueryResult<report4>) => {
             if (err) {
                 reject(err);
             } else {
@@ -145,7 +192,12 @@ export const report4 = ((city_name:string, movie_name:string, cinema_name:string
 
 // http://localhost:3000/report/top_ten_actor
 
-export const report5 = ((): Promise<any> => {
+interface report5 {
+    actor_name: string;
+    number_of_movie: number;
+}
+
+export const report5 = ((): Promise<report5[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT t1.name AS actor_name,count(t3.id) AS number_of_movie
     FROM actor AS t1
@@ -153,7 +205,7 @@ export const report5 = ((): Promise<any> => {
    JOIN movie as t3 ON t2.movie_id = t3.id 
    GROUP BY t1.name
    ORDER BY number_of_movie DESC LIMIT 10;`
-        db.query(query, (err:Error, dbResponse) => {
+        db.query(query, (err: Error, dbResponse:QueryResult<report5>) => {
             if (err) {
                 reject(err);
             } else {
@@ -171,12 +223,22 @@ export const report5 = ((): Promise<any> => {
 
 // http://localhost:3000/report/year?year=2021
 
-export const report6 = ((year:number) : Promise<any>=> {
+// {
+//     "name": "Shikara",
+//     "release_date": "2021-09-01T18:30:00.000Z"
+//   }
+
+interface report6 {
+    name: string;
+    release_date: string;
+}
+
+export const report6 = ((year: number): Promise<report6[]> => {
     return new Promise((resolve, reject) => {
         let query = ` SELECT name, release_date
         FROM movie
         WHERE EXTRACT(YEAR FROM release_date) = $1;`
-        db.query(query, [year], (err:Error, dbResponse) => {
+        db.query(query, [year], (err: Error, dbResponse:QueryResult<report6>) => {
             if (err) {
                 reject(err);
             } else {
@@ -199,7 +261,20 @@ export const report6 = ((year:number) : Promise<any>=> {
 
 // http://localhost:3000/report/top_ten_customers
 
-export const report7 = ((): Promise<any> => {
+// {
+//     "city_name": "Ahmedabad",
+//     "cinema_name": "PTR Cinema",
+//     "name": "Hoyt Whitley",
+//     "amount": "7135"
+//   }
+
+interface report7 {
+    city_name: string;
+    cinema_name: string;
+    name: string;
+    amount: number;
+}
+export const report7 = ((): Promise<report7[]> => {
     return new Promise((resolve, reject) => {
         let query = ` SELECT t8.name AS city_name,t7.name AS cinema_name,t1.name,SUM(t4.price) AS amount 
         FROM customer AS t1
@@ -212,7 +287,7 @@ export const report7 = ((): Promise<any> => {
         JOIN city AS t8 ON t7.city_id = t8.id
         GROUP BY (t1.name,t7.name,t8.name)
         ORDER BY amount DESC LIMIT 10`
-        db.query(query, (err:Error, dbResponse) => {
+        db.query(query, (err: Error, dbResponse:QueryResult<report7>) => {
             if (err) {
                 reject(err);
             } else {
@@ -230,7 +305,19 @@ export const report7 = ((): Promise<any> => {
 
 // http://localhost:3000/report/no_of_booking
 
-export const report8 = ((): Promise<any> => {
+// {
+//     "city_name": "Ahmedabad",
+//     "cinema_name": "PTR Cinema",
+//     "no_of_booking": "2751"
+//   }
+
+interface report8 {
+    city_name: string;
+    cinema_name: string;
+    no_of_booking: number;
+}
+
+export const report8 = ((): Promise<report8[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT 
         t8.name AS city_name,t7.name AS cinema_name,count(t8.id) AS no_of_booking
@@ -242,7 +329,7 @@ export const report8 = ((): Promise<any> => {
         JOIN cinema AS t7 ON t6.cinema_id = t7.id
         JOIN city AS t8 ON t7.city_id = t8.id
         GROUP BY (t7.name,t8.name,t3.status)`
-        db.query(query, (err:Error, dbResponse) => {
+        db.query(query, (err: Error, dbResponse:QueryResult<report8>) => {
             if (err) {
                 reject(err);
             } else {
@@ -261,7 +348,21 @@ export const report8 = ((): Promise<any> => {
 
 // http://localhost:3000/report/unique_customers
 
-export const report9 = ((): Promise<any> => {
+// {
+//     "city_name": "Ahmedabad",
+//     "cinema_name": "PTR Cinema",
+//     "customer_name": "Claude Stephenson",
+//     "count_number": "1"
+//   }
+
+interface report9 {
+    city_name: string;
+    cinema_name: string;
+    customer_name: string;
+    count_number: number;
+}
+
+export const report9 = ((): Promise<report9[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT t8.name AS city_name,t7.name AS cinema_name,
         t1.name customer_name,COUNT(t2.id) AS count_number
@@ -276,7 +377,7 @@ export const report9 = ((): Promise<any> => {
         GROUP BY (t2.id,t1.name,t7.name,t8.name)
         HAVING COUNT(t2.id) = 1
         ORDER BY city_name`
-        db.query(query, (err:Error, dbResponse) => {
+        db.query(query, (err: Error, dbResponse:QueryResult<report9>) => {
             if (err) {
                 reject(err);
             } else {
@@ -294,7 +395,19 @@ export const report9 = ((): Promise<any> => {
 
 // http://localhost:3000/report/show_booking_ticket?movie_name=Unbroken&hall_name=Screen+1
 
-export const report10 = ((movie_name:string, hall_name:string): Promise<any> => {
+// {
+//     "cinema_hall_name": "Screen 1",
+//     "movie_name": "Unbroken",
+//     "customer_name": "Aaron Bryant"
+//   }
+
+interface report10 {
+    cinema_hall_name: string;
+    movie_name: string;
+    customer_name: string;
+
+}
+export const report10 = ((movie_name: string, hall_name: string): Promise<report10[]> => {
     return new Promise((resolve, reject) => {
         let query = `SELECT t6.name AS cinema_hall_name,t8.name AS movie_name,
         t1.name AS customer_name
@@ -312,7 +425,7 @@ export const report10 = ((movie_name:string, hall_name:string): Promise<any> => 
         // console.log(movie_name, hall_name);
 
 
-        db.query(query, [movie_name, hall_name], (err:Error, dbResponse) => {
+        db.query(query, [movie_name, hall_name], (err: Error, dbResponse:QueryResult<report10>) => {
             if (err) {
                 reject(err);
             } else {
