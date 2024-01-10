@@ -1,5 +1,5 @@
-
 import * as model from'./city_model'
+
 export const get_data = ((req, res, next):void => {
   model.get_city_data().then(cityData => {
     res.json(cityData);
@@ -19,6 +19,8 @@ export const add_data = ((req, res, next):void => {
       }).catch(error =>{
         console.error(error);
       });
+    }else {
+      res.status(400).send('Bad Request: Missing required parameters');
     }
    
   }
@@ -33,6 +35,8 @@ export const update_data = ((req, res, next):void => {
     }).catch(error =>{
       console.error(error);
     });
+  }else {
+    res.status(400).send('Bad Request: Missing required parameters');
   }
  
 });
@@ -45,6 +49,8 @@ export const delete_data = ( (req, res, next):void => {
     }).catch(error =>{
       console.error(error);
     });
+  }else {
+    res.status(400).send('Bad Request: Missing required parameters');
   }
 
 })

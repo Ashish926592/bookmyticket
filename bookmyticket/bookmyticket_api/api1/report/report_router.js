@@ -1,21 +1,18 @@
-var express = require('express');
-var router = express.Router();
-
-
-var router_name = require('./report_controller');
-var router_validator= require('./report_validator');
-var {checkRole} = require('../authenticate_api/authenticate_api_middleware');
-
-
-router.get('/city',router_validator.validate_report1 ,router_name.report_query1)
-router.get('/cinema_hall',router_validator.validate_report2 ,router_name.report_query2)
-router.get('/movie_name', router_validator.validate_report3 ,router_name.report_query3)
-router.get('/seating_plan', router_validator.validate_report4, router_name.report_query4)
-router.get('/top_ten_actor', router_name.report_query5)
-router.get('/year',router_validator.validate_report6 , router_name.report_query6)
-router.get('/top_ten_customers',checkRole('admin'), router_name.report_query7)
-router.get('/no_of_booking',checkRole('admin'), router_name.report_query8)
-router.get('/unique_customers',checkRole('admin'), router_name.report_query9)
-router.get('/show_booking_ticket',checkRole('admin'),router_validator.validate_report10 , router_name.report_query10)
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var router = (0, express_1.Router)();
+var router_name = require("./report_controller");
+var router_validator = require("./report_validator");
+var authenticate_api_middleware_1 = require("../authenticate_api/authenticate_api_middleware");
+router.get('/city', router_validator.validate_report1, router_name.report_query1);
+router.get('/cinema_hall', router_validator.validate_report2, router_name.report_query2);
+router.get('/movie_name', router_validator.validate_report3, router_name.report_query3);
+router.get('/seating_plan', router_validator.validate_report4, router_name.report_query4);
+router.get('/top_ten_actor', router_name.report_query5);
+router.get('/year', router_validator.validate_report6, router_name.report_query6);
+router.get('/top_ten_customers', (0, authenticate_api_middleware_1.checkRole)('admin'), router_name.report_query7);
+router.get('/no_of_booking', (0, authenticate_api_middleware_1.checkRole)('admin'), router_name.report_query8);
+router.get('/unique_customers', (0, authenticate_api_middleware_1.checkRole)('admin'), router_name.report_query9);
+router.get('/show_booking_ticket', (0, authenticate_api_middleware_1.checkRole)('admin'), router_validator.validate_report10, router_name.report_query10);
 module.exports = router;

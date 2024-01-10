@@ -1,16 +1,12 @@
-var express = require('express');
-var router = express.Router();
-
-
-var router_name = require('./cinema_controller');
-var cinema_validator = require('./cinema_validator')
-var {checkRole} = require('../authenticate_api/authenticate_api_middleware');
-
-
-router.get('/',router_name.get_data)
-router.post('/',checkRole('admin'),cinema_validator.validate_add_cinema,router_name.add_data)
-router.put('/',checkRole('admin'),cinema_validator.validate_update_cinema,router_name.update_data)
-router.delete('/',checkRole('admin'),cinema_validator.validate_delete_cinema,router_name.delete_data)
-
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var router_name = require("./cinema_controller");
+var cinema_validator = require("./cinema_validator");
+var authenticate_api_middleware_1 = require("../authenticate_api/authenticate_api_middleware");
+var router = (0, express_1.Router)();
+router.get('/', router_name.get_data);
+router.post('/', (0, authenticate_api_middleware_1.checkRole)('admin'), cinema_validator.validate_add_cinema, router_name.add_data);
+router.put('/', (0, authenticate_api_middleware_1.checkRole)('admin'), cinema_validator.validate_update_cinema, router_name.update_data);
+router.delete('/', (0, authenticate_api_middleware_1.checkRole)('admin'), cinema_validator.validate_delete_cinema, router_name.delete_data);
 module.exports = router;

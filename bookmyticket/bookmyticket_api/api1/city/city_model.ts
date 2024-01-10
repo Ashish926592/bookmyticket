@@ -20,11 +20,11 @@ export const get_city_data = (():Promise<City[]> => {
         });
     })
 })
-
+// http://localhost:3000/city?name=aa&state=bbb
 export const add_city_data = ((name:string, state:string):Promise<{ insert: string } >=> {
     return new Promise((resolve, reject) => {
 
-        db.query(`INSERT INTO city(name,state) values ($1,$2)`, [name, state], (err, dbResponse) => {
+        db.query(`INSERT INTO city(name,state) values ($1,$2)`, [name, state], (err) => {
             if (err) {
                 console.log(err);
                 reject({ "insert": "failed to insert" });

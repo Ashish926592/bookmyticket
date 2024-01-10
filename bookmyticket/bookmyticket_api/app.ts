@@ -117,14 +117,13 @@ redisClient.on('connect', function (err) {
 var city_router = require('./api1/city/city_router');
 var cinema_router = require('./api1/cinema/cinema_router')
 var report_router = require('./api1/report/report_router')
-var authenticate_router = require('./api1/authenticate_api/authenticate_api_router')
 var app = express();
 
 // Configure express-session to use connect-redis
 app.use(session({
   store: new RedisStore({
     client: redisClient,
-    ttl:60,
+    ttl:600,
   }),
   secret: 'your-secret-key',
   resave: false,

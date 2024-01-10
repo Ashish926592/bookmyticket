@@ -1,94 +1,111 @@
-const model = require('./report_model');
-
-exports.report_query1 = ('/', (req, res) => {
-    const { city_name } = req.query
-    model.report1(city_name).then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
-})
-
-exports.report_query2 = ('/', (req, res, next) => {
-    const { cinema_hall } = req.query
-    model.report2(cinema_hall).then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.report_query10 = exports.report_query9 = exports.report_query8 = exports.report_query7 = exports.report_query6 = exports.report_query5 = exports.report_query4 = exports.report_query3 = exports.report_query2 = exports.report_query1 = void 0;
+var model = require("./report_model");
+exports.report_query1 = (function (req, res) {
+    var city_name = req.query.city_name;
+    if (city_name) {
+        model.report1(city_name).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
 });
-
-exports.report_query3 = ('/', (req, res, next) => {
-    const { movie_name } = req.query;
-    model.report3(movie_name).then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
+exports.report_query2 = (function (req, res, next) {
+    var cinema_hall = req.query.cinema_hall;
+    if (cinema_hall) {
+        model.report2(cinema_hall).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
 });
-
-exports.report_query4 = ('/', (req, res, next) => {
-    const { city_name, movie_name, cinema_name, hall_name, date } = req.body;
+exports.report_query3 = (function (req, res, next) {
+    var movie_name = req.query.movie_name;
+    if (movie_name) {
+        model.report3(movie_name).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
+});
+exports.report_query4 = (function (req, res, next) {
+    var _a = req.body, city_name = _a.city_name, movie_name = _a.movie_name, cinema_name = _a.cinema_name, hall_name = _a.hall_name, date = _a.date;
+    if (city_name && cinema_name && movie_name && hall_name && date) {
+        model.report4(city_name, movie_name, cinema_name, hall_name, date).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
     // console.log(city_name, movie_name, cinema_name, hall_name, date);
-    model.report4(city_name, movie_name, cinema_name, hall_name, date).then(response => {
+});
+exports.report_query5 = (function (req, res) {
+    model.report5().then(function (response) {
         res.json(response);
-    }).catch(error => {
+    }).catch(function (error) {
         console.error(error);
     });
 });
-
-exports.report_query5 = ('/', (req, res) => {
-    model.report5().then(response => {
+exports.report_query6 = (function (req, res) {
+    var year = req.query.year;
+    if (year) {
+        model.report6(year).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
+});
+exports.report_query7 = (function (req, res) {
+    model.report7().then(function (response) {
         res.json(response);
-    }).catch(error => {
+    }).catch(function (error) {
         console.error(error);
     });
-
 });
-
-exports.report_query6 = ('/', (req, res) => {
-    const { year } = req.query
-    model.report6(year).then(response => {
+exports.report_query8 = (function (req, res) {
+    model.report8().then(function (response) {
         res.json(response);
-    }).catch(error => {
+    }).catch(function (error) {
         console.error(error);
     });
-
 });
-
-exports.report_query7 = ('/', (req, res) => {
-    model.report7().then(response => {
+exports.report_query9 = (function (req, res) {
+    model.report9().then(function (response) {
         res.json(response);
-    }).catch(error => {
+    }).catch(function (error) {
         console.error(error);
     });
-
 });
-
-exports.report_query8 = ('/', (req, res) => {
-    model.report8().then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
-
+exports.report_query10 = (function (req, res) {
+    var _a = req.query, movie_name = _a.movie_name, hall_name = _a.hall_name;
+    if (movie_name && hall_name) {
+        model.report10(movie_name, hall_name).then(function (response) {
+            res.json(response);
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
+    else {
+        res.status(400).send('Bad Request: Missing required parameters');
+    }
 });
-exports.report_query9 = ('/', (req, res) => {
-    model.report9().then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
-
-});
-
-exports.report_query10 = ('/', (req, res) => {
-    const { movie_name, hall_name } = req.query
-    model.report10(movie_name, hall_name).then(response => {
-        res.json(response);
-    }).catch(error => {
-        console.error(error);
-    });
-
-});
-
