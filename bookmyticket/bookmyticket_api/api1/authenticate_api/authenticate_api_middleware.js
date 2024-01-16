@@ -3,7 +3,7 @@ exports.authenticateSession = (req, res, next) => {
   if (req.session && req.session.user) {
       return next();
   } else {
-    return next(new Error('Access denied. Not authenticated.'));
+    res.status(401).send('Access denied. Not authenticated.');
   }
 };
 
@@ -13,6 +13,9 @@ exports.checkRole = (role) => (req, res, next) => {
   if (req.session.user && req.session.user[0].role === role) {
       return next();
   } else {
-    return next(new Error('Access denied. Insufficient permissions.'));
+    res.status(403).send('Access denied. Insufficient permissions.');
+    
   }
 };
+
+// res.status(err.statusCode || 500).json({ error: 'Access denied. Insufficient permissions' });
